@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style type="text/css">
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        .centered-heading {
+            text-align: center;
+        }
+        .navbar {
+            background-color: #343a40;
+        }
+        .navbar-brand img {
+            height: 40px;
+        }
+        .navbar-nav .nav-link {
+            color: white;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #ccc;
+        }
+    </style>
+</head>
+<body style="background-color: rgba(101,96,96,0.35);">
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="/">
+        <img src="https://students.finki.ukim.mk/finki-logo-9.png" alt="Logo">
+    </a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item"><a class="nav-link" href="/login">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="/login">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<br><br>
+<div class="container" style="background-color: rgba(255,255,255,0.69);">
+    <div class="form-container">
+        <br>
+        <h3 class="centered-heading"><span th:text="${topic?.title}"></span></h3>
+        <br>
+        <div>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <strong><em>
+                        <h5 class="card-text">Опис на тема: </h5>
+                    </em></strong>
+                    <span th:utext="${topic?.description}"></span>
+                </div>
+            </div>
+            <div class="card mb-3"  th:if="${isEnrolled || professor == topic.professor}" >
+                <div class="card-body">
+                    <strong><em>
+                        <a th:if="${professor == topic.professor}" th:href="@{'/topics/addTask/{id}' (id=${topic.id})}" class="btn btn-secondary btn-sm mb-2">Add task</a>
+                        <h5 class="card-text">Таскови: </h5>
+                    </em></strong>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center" th:each="task: ${topic?.tasks}">
+                            <div class="d-flex align-items-center">
+                                <span th:if="${task?.completed}" class="badge badge-success">&#10003;</span>
+                                <a th:if="${!task?.completed}" th:href="@{'/topics/completeTask/{id}' (id=${task.id})}" class="btn btn-success btn-sm mr-2">Complete</a>
+                                <a th:href="@{'/tasks/' + ${task.id} + '/details'}" th:text="${task.title}"></a>
+                            </div>
+                            <form th:if="${professor} and ${task.completed}" th:method="get" th:action="@{'/topics/uncompleteTask/{id}' (id=${task.id})}" class="d-inline">
+                                <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 4px; width: 24px; height: 24px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </button>
+                            </form>
+                            <form id="deleteForm" th:if="${professor}" th:method="post" th:action="@{'/tasks/{id}/delete' (id=${task.id})}" class="d-inline">
+                                <button type="button" onclick="confirmDelete()" class="btn btn-danger btn-sm" style="width: 24px; height: 24px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end pt-2 pb-1">
+            <a id="back" href="/topics" type="button" class="btn btn-secondary btn-sm">Врати се назад</a>
+        </div>
+    </div>
+</div>
+<div class="text-center mt-3 mb-3">
+    ©2024 ФИНКИ Сите права се задржани
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function confirmDelete() {
+        if (confirm("Дали сте сигурни дека сакате да го избришете овој таск?")) {
+            document.getElementById('deleteForm').submit();
+        }
+    }
+</script>
+
+</body>
+</html>

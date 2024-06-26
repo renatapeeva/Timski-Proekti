@@ -1,0 +1,30 @@
+version: "3.3"
+services:
+  db:
+    image: "postgres"
+    restart: always
+    container_name: "db"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin123
+      - POSTGRES_DB=teamprojects_database
+    ports:
+      - "5432:5432"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: finki_common_model
+    depends_on:
+      - db
+    environment:
+      - spring.datasource.url=jdbc:postgresql://db:5432/teamprojects_database
+      - spring.datasource.username=postgres
+      - spring.datasource.password=admin123
+      - spring.jpa.hibernate.ddl.auto=update
+      - spring.jpa.show-sql=false
+      - server.port=9090
+    ports:
+      - "9090:9090"
+
+

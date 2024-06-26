@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit-form</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        .centered-heading {
+            text-align: center;
+        }
+        .form-container {
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar {
+            background-color: #343a40;
+        }
+        .navbar-brand img {
+            height: 40px;
+        }
+        .navbar-nav .nav-link {
+            color: white;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #ccc;
+        }
+    </style>
+</head>
+<body style="background-color: rgba(101,96,96,0.35);">
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="/">
+        <img src="https://students.finki.ukim.mk/finki-logo-9.png" alt="Logo">
+    </a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item"><a class="nav-link" href="/login">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="/login">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<br><br>
+<div class="container">
+    <div class="form-container bg-white">
+        <h2 class="centered-heading">Измени ја темата</h2>
+        <form th:method="POST" th:action="@{/topics} + ${topic == null ? '' : '/' + topic.id}">
+            <div class="form-group">
+                <label for="title">Наслов на тема</label>
+                <input type="text"
+                       class="form-control"
+                       id="title"
+                       name="title"
+                       th:value="${topic?.title}"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="description">Опис на тема</label>
+                <div id="editor" style="height: 100px;"></div>
+                <input type="hidden" id="description" name="description" th:value="${topic?.description}">
+            </div>
+            <div class="form-group">
+                <label for="dueDate">Рок за пријавување</label>
+                <input type="datetime-local"
+                       class="form-control"
+                       id="dueDate"
+                       name="dueDate"
+                       th:value="${formattedDueDate}"
+                       required>
+            </div>
+
+
+
+            <div class="form-group">
+                <label>Запишани студенти</label>
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Избери</th>
+                        <th>Индекс</th>
+                        <th>Име</th>
+                        <th>Презиме</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="student : ${topic?.students}">
+                        <td class="text-center"><input type="checkbox" name="studentIds" th:value="${student.index}" checked></td>
+                        <td class="text-center" th:text="${student.index}"></td>
+                        <td class="text-center" th:text="${student.name}"></td>
+                        <td class="text-center" th:text="${student.lastName}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <input type="hidden" id="studentIds" name="students" th:value="${topic != null && topic.students.size() > 0 ? topic.students.![index] : null}">
+            <input type="hidden" id="counter" name="counter" th:value="${topic != null ? topic.students.size() : 0}">
+            <input type="hidden" id="professorId" name="professorId" th:value="${topic != null ? topic?.professor?.id : professor?.id}">
+            <br>
+            <div class="d-flex justify-content-end">
+                <button id="submit" type="submit" class="btn btn-success btn-sm">Одобри</button>
+                <a id="back" href="/topics" class="btn btn-secondary btn-sm ml-2">Врати се назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="text-center mt-3 mb-3">
+    ©2024 ФИНКИ Сите права се задржани
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        var quill = new Quill('#editor', {
+            theme: 'snow'
+        });
+
+        var description = /*[[${topic?.description}]]*/'';
+        if (description) {
+            quill.root.innerHTML = description;
+        }
+
+        $('form').on('submit', function () {
+            var descriptionContent = quill.root.innerHTML;
+            $('#description').val(descriptionContent);
+        });
+    });
+</script>
+</body>
+</html>
+

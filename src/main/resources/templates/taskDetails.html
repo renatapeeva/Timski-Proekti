@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Task Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style type="text/css">
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: rgba(101,96,96,0.35);
+        }
+        .centered-heading {
+            text-align: center;
+        }
+        .navbar {
+            background-color: #343a40;
+        }
+        .navbar-brand img {
+            height: 40px;
+        }
+        .navbar-nav .nav-link {
+            color: white;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #ccc;
+        }
+        .card-container {
+            background-color: rgba(255,255,255,0.69);
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="/">
+        <img src="https://students.finki.ukim.mk/finki-logo-9.png" alt="Logo">
+    </a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item"><a class="nav-link" href="/login">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="card-container">
+        <h3 class="centered-heading">Task Details: <span th:text="${task.title}"></span></h3>
+        <div class="card mb-3">
+            <div class="card-body">
+                <strong><em>
+                    <h5 class="card-text">Task Description: </h5>
+                </em></strong>
+                <p th:utext="${task.description}"></p>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <strong><em>
+                    <h5 class="card-text">Completion Status: </h5>
+                </em></strong>
+                <span th:if="${task.completed}" class="badge badge-success">&#10003; Completed</span>
+                <span th:unless="${task.completed}" class="badge badge-secondary">Not Completed</span>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end pt-2 pb-1">
+            <a id="back" href="/topics" type="button" class="btn btn-secondary btn-sm">Back to Topics</a>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-3 mb-3">
+    ©2024 ФИНКИ Сите права се задржани
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
